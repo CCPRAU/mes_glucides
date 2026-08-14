@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#111111">
-  <title>Mes Glucides V1.1</title>
+  <title>Mes Glucides V1.2</title>
 
   <style>
     :root{
@@ -12,9 +12,7 @@
       color-scheme:light dark;
     }
 
-    *{
-      box-sizing:border-box;
-    }
+    *{box-sizing:border-box}
 
     body{
       margin:0;
@@ -35,6 +33,7 @@
 
     h2{
       margin-top:0;
+      font-size:22px;
     }
 
     .sub{
@@ -46,6 +45,7 @@
       color:#555;
       font-weight:650;
       margin-bottom:18px;
+      text-transform:capitalize;
     }
 
     .card{
@@ -76,12 +76,12 @@
 
     button{
       width:100%;
-      font-size:19px;
+      font-size:18px;
       font-weight:700;
       padding:14px;
       border:0;
       border-radius:14px;
-      margin-top:14px;
+      margin-top:12px;
       cursor:pointer;
     }
 
@@ -95,6 +95,11 @@
       color:#111;
     }
 
+    .danger{
+      background:#f2dddd;
+      color:#8a1111;
+    }
+
     .total{
       font-size:42px;
       font-weight:800;
@@ -104,26 +109,6 @@
     .unit{
       font-size:18px;
       color:#666;
-    }
-
-    .meal-total{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      padding:11px 0;
-      border-bottom:1px solid #eee;
-    }
-
-    .meal-total:last-child{
-      border-bottom:0;
-    }
-
-    .meal-name{
-      font-weight:700;
-    }
-
-    .meal-value{
-      font-weight:800;
     }
 
     .row{
@@ -138,9 +123,7 @@
       border-bottom:0;
     }
 
-    .grow{
-      flex:1;
-    }
+    .grow{flex:1}
 
     .food{
       font-weight:700;
@@ -188,6 +171,44 @@
       font-size:14px;
     }
 
+    .meal-total{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      padding:11px 0;
+      border-bottom:1px solid #eee;
+    }
+
+    .meal-total:last-child{
+      border-bottom:0;
+    }
+
+    .meal-name{font-weight:700}
+    .meal-value{font-weight:800}
+
+    .menu-status{
+      margin-top:12px;
+      padding:12px;
+      border-radius:12px;
+      background:#f0f0f3;
+      line-height:1.4;
+    }
+
+    .menu-title{
+      font-weight:800;
+      margin-bottom:4px;
+    }
+
+    .button-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .button-row button{
+      margin-top:12px;
+    }
+
     @media (prefers-color-scheme:dark){
 
       body{
@@ -222,9 +243,15 @@
 
       .secondary,
       .del,
-      .suggestion{
+      .suggestion,
+      .menu-status{
         background:#2b2b2e;
         color:#fff;
+      }
+
+      .danger{
+        background:#3b2020;
+        color:#ffb5b5;
       }
     }
   </style>
@@ -237,12 +264,68 @@
   <h1>Mes Glucides</h1>
 
   <div class="sub">
-    V1.1 — repas et date réelle
+    V1.2 — menus habituels
   </div>
 
   <div class="date" id="dateLabel"></div>
 
+  <!-- MENU HABITUEL -->
+
   <div class="card">
+
+    <h2>Menu habituel</h2>
+
+    <div class="suggestion" id="todaySuggestion"></div>
+
+    <label for="menuMeal">
+      Repas du menu
+    </label>
+
+    <select id="menuMeal">
+      <option value="dejeuner">Déjeuner</option>
+      <option value="diner">Dîner</option>
+      <option value="collation">Collation</option>
+      <option value="souper">Souper</option>
+      <option value="dodo">Goûter avant dodo</option>
+    </select>
+
+    <label for="menuSlot">
+      Menu
+    </label>
+
+    <select id="menuSlot">
+      <option value="1">Menu 1</option>
+      <option value="2">Menu 2</option>
+      <option value="3">Menu 3</option>
+      <option value="variante">Variante</option>
+    </select>
+
+    <div class="menu-status" id="menuStatus"></div>
+
+    <button class="primary" id="loadMenu">
+      Charger ce menu
+    </button>
+
+    <button class="secondary" id="saveMenu">
+      Enregistrer le repas actuel comme ce menu
+    </button>
+
+    <button class="danger" id="deleteMenu">
+      Supprimer ce menu enregistré
+    </button>
+
+    <div class="hint">
+      Les menus sont enregistrés selon le jour de la semaine,
+      le repas et le numéro de menu.
+    </div>
+
+  </div>
+
+  <!-- AJOUT ALIMENT -->
+
+  <div class="card">
+
+    <h2>Ajouter un aliment</h2>
 
     <label for="meal">Repas</label>
 
@@ -298,6 +381,8 @@
 
   </div>
 
+  <!-- TOTAL JOURNÉE -->
+
   <div class="card">
 
     <div>Aujourd'hui</div>
@@ -309,6 +394,8 @@
 
   </div>
 
+  <!-- TOTAUX REPAS -->
+
   <div class="card">
 
     <h2>Totaux par repas</h2>
@@ -316,6 +403,8 @@
     <div id="mealTotals"></div>
 
   </div>
+
+  <!-- ENTRÉES -->
 
   <div class="card">
 
@@ -333,7 +422,8 @@
 
 <script>
 
-const KEY = "mes_glucides_v1";
+const DAY_KEY = "mes_glucides_v1";
+const MENU_KEY = "mes_glucides_menus_v12";
 
 const MEALS = {
   dejeuner: "Déjeuner",
@@ -343,6 +433,16 @@ const MEALS = {
   dodo: "Goûter avant dodo"
 };
 
+const DAYS = [
+  "dimanche",
+  "lundi",
+  "mardi",
+  "mercredi",
+  "jeudi",
+  "vendredi",
+  "samedi"
+];
+
 function localDateKey(){
 
   const d = new Date();
@@ -350,12 +450,17 @@ function localDateKey(){
   const year = d.getFullYear();
 
   const month =
-    String(d.getMonth() + 1).padStart(2, "0");
+    String(d.getMonth() + 1).padStart(2,"0");
 
   const day =
-    String(d.getDate()).padStart(2, "0");
+    String(d.getDate()).padStart(2,"0");
 
   return `${year}-${month}-${day}`;
+}
+
+function currentDay(){
+
+  return DAYS[new Date().getDay()];
 }
 
 function prettyDate(){
@@ -373,8 +478,7 @@ function prettyDate(){
 
 function suggestedMeal(){
 
-  const hour =
-    new Date().getHours();
+  const hour = new Date().getHours();
 
   if (hour < 10){
     return "dejeuner";
@@ -395,47 +499,6 @@ function suggestedMeal(){
   return "dodo";
 }
 
-let data =
-  JSON.parse(
-    localStorage.getItem(KEY) || "{}"
-  );
-
-if (data.date !== localDateKey()){
-
-  data = {
-    date: localDateKey(),
-    items: []
-  };
-}
-
-if (!Array.isArray(data.items)){
-
-  data.items = [];
-}
-
-/*
-Compatibilité V1 :
-les anciennes entrées n'avaient pas de repas.
-On les place dans le repas suggéré.
-*/
-data.items =
-  data.items.map(item => ({
-
-    ...item,
-
-    meal:
-      item.meal ||
-      suggestedMeal()
-  }));
-
-function save(){
-
-  localStorage.setItem(
-    KEY,
-    JSON.stringify(data)
-  );
-}
-
 function fmt(n){
 
   return Number(n).toLocaleString(
@@ -446,15 +509,155 @@ function fmt(n){
   );
 }
 
+/* -------------------------
+   DONNÉES JOURNÉE
+------------------------- */
+
+let data =
+  JSON.parse(
+    localStorage.getItem(DAY_KEY) || "{}"
+  );
+
+if (data.date !== localDateKey()){
+
+  data = {
+    date:localDateKey(),
+    items:[]
+  };
+}
+
+if (!Array.isArray(data.items)){
+  data.items = [];
+}
+
+data.items =
+  data.items.map(item => ({
+    ...item,
+    meal:item.meal || suggestedMeal()
+  }));
+
+function saveDay(){
+
+  localStorage.setItem(
+    DAY_KEY,
+    JSON.stringify(data)
+  );
+}
+
+/* -------------------------
+   MENUS
+------------------------- */
+
+let menus =
+  JSON.parse(
+    localStorage.getItem(MENU_KEY) || "{}"
+  );
+
+function saveMenus(){
+
+  localStorage.setItem(
+    MENU_KEY,
+    JSON.stringify(menus)
+  );
+}
+
+function menuKey(day,meal,slot){
+
+  return `${day}__${meal}__${slot}`;
+}
+
+function selectedMenuKey(){
+
+  const meal =
+    document.getElementById("menuMeal").value;
+
+  const slot =
+    document.getElementById("menuSlot").value;
+
+  return menuKey(
+    currentDay(),
+    meal,
+    slot
+  );
+}
+
+function selectedMenu(){
+
+  return menus[selectedMenuKey()] || null;
+}
+
+function menuTotal(menu){
+
+  if (!menu || !Array.isArray(menu.items)){
+    return 0;
+  }
+
+  return menu.items.reduce(
+    (sum,item) =>
+      sum + Number(item.total || 0),
+    0
+  );
+}
+
+function updateMenuStatus(){
+
+  const meal =
+    document.getElementById("menuMeal").value;
+
+  const slot =
+    document.getElementById("menuSlot").value;
+
+  const menu =
+    selectedMenu();
+
+  const status =
+    document.getElementById("menuStatus");
+
+  const slotLabel =
+    slot === "variante"
+      ? "Variante"
+      : `Menu ${slot}`;
+
+  if (!menu){
+
+    status.innerHTML = `
+      <div class="menu-title">
+        ${currentDay()} · ${MEALS[meal]} · ${slotLabel}
+      </div>
+      Aucun menu enregistré.
+    `;
+
+    return;
+  }
+
+  status.innerHTML = `
+    <div class="menu-title">
+      ${currentDay()} · ${MEALS[meal]} · ${slotLabel}
+    </div>
+
+    ${menu.items.length} aliment(s)
+    · ${fmt(menuTotal(menu))} g de glucides
+  `;
+}
+
+/* -------------------------
+   CALCULS
+------------------------- */
+
 function mealTotal(meal){
 
   return data.items
     .filter(x => x.meal === meal)
     .reduce(
-      (sum,x) => sum + Number(x.total || 0),
+      (sum,x) =>
+        sum + Number(x.total || 0),
       0
     );
 }
+
+/* -------------------------
+   AFFICHAGE
+------------------------- */
 
 function renderMealTotals(){
 
@@ -493,8 +696,8 @@ function render(){
 
   const total =
     data.items.reduce(
-      (s,x) =>
-        s + Number(x.total || 0),
+      (sum,x) =>
+        sum + Number(x.total || 0),
       0
     );
 
@@ -504,6 +707,7 @@ function render(){
       fmt(total);
 
   renderMealTotals();
+  updateMenuStatus();
 
   if (!data.items.length){
 
@@ -520,8 +724,7 @@ function render(){
     const row =
       document.createElement("div");
 
-    row.className =
-      "row";
+    row.className = "row";
 
     row.innerHTML = `
       <div class="grow">
@@ -559,7 +762,7 @@ function render(){
 
         data.items.splice(i,1);
 
-        save();
+        saveDay();
 
         render();
       };
@@ -568,19 +771,22 @@ function render(){
   });
 }
 
-const mealSelect =
-  document.getElementById("meal");
+/* -------------------------
+   INITIALISATION
+------------------------- */
 
 const initialMeal =
   suggestedMeal();
 
-mealSelect.value =
-  initialMeal;
+document
+  .getElementById("meal")
+  .value =
+    initialMeal;
 
 document
-  .getElementById("suggestion")
-  .textContent =
-    `Repas suggéré maintenant : ${MEALS[initialMeal]}`;
+  .getElementById("menuMeal")
+  .value =
+    initialMeal;
 
 document
   .getElementById("dateLabel")
@@ -588,11 +794,27 @@ document
     prettyDate();
 
 document
+  .getElementById("suggestion")
+  .textContent =
+    `Repas suggéré maintenant : ${MEALS[initialMeal]}`;
+
+document
+  .getElementById("todaySuggestion")
+  .textContent =
+    `Aujourd'hui : ${currentDay()} · ${MEALS[initialMeal]} suggéré`;
+
+/* -------------------------
+   AJOUT ALIMENT
+------------------------- */
+
+document
   .getElementById("add")
   .onclick = ()=>{
 
     const meal =
-      mealSelect.value;
+      document
+        .getElementById("meal")
+        .value;
 
     const food =
       document
@@ -629,18 +851,15 @@ document
     }
 
     data.items.push({
-
       meal,
       food,
       qty,
       carbs,
-      total:
-        qty * carbs,
-      time:
-        Date.now()
+      total:qty * carbs,
+      time:Date.now()
     });
 
-    save();
+    saveDay();
 
     render();
 
@@ -661,30 +880,194 @@ document
       .focus();
   };
 
+/* -------------------------
+   ENREGISTRER MENU
+------------------------- */
+
+document
+  .getElementById("saveMenu")
+  .onclick = ()=>{
+
+    const meal =
+      document
+        .getElementById("menuMeal")
+        .value;
+
+    const slot =
+      document
+        .getElementById("menuSlot")
+        .value;
+
+    const items =
+      data.items
+        .filter(x => x.meal === meal)
+        .map(x => ({
+          food:x.food,
+          qty:x.qty,
+          carbs:x.carbs,
+          total:x.total
+        }));
+
+    if (!items.length){
+
+      alert(
+        "Aucun aliment dans ce repas à enregistrer."
+      );
+
+      return;
+    }
+
+    const key =
+      menuKey(
+        currentDay(),
+        meal,
+        slot
+      );
+
+    const slotLabel =
+      slot === "variante"
+        ? "Variante"
+        : `Menu ${slot}`;
+
+    if (
+      menus[key] &&
+      !confirm(
+        `${slotLabel} existe déjà pour ${currentDay()} ${MEALS[meal]}. Le remplacer ?`
+      )
+    ){
+      return;
+    }
+
+    menus[key] = {
+      day:currentDay(),
+      meal,
+      slot,
+      items,
+      savedAt:Date.now()
+    };
+
+    saveMenus();
+
+    updateMenuStatus();
+
+    alert(
+      `${slotLabel} enregistré pour ${currentDay()} · ${MEALS[meal]}.`
+    );
+  };
+
+/* -------------------------
+   CHARGER MENU
+------------------------- */
+
+document
+  .getElementById("loadMenu")
+  .onclick = ()=>{
+
+    const menu =
+      selectedMenu();
+
+    if (!menu){
+
+      alert(
+        "Aucun menu enregistré ici."
+      );
+
+      return;
+    }
+
+    menu.items.forEach(item => {
+
+      data.items.push({
+        meal:menu.meal,
+        food:item.food,
+        qty:item.qty,
+        carbs:item.carbs,
+        total:item.total,
+        time:Date.now()
+      });
+    });
+
+    saveDay();
+
+    render();
+  };
+
+/* -------------------------
+   SUPPRIMER MENU
+------------------------- */
+
+document
+  .getElementById("deleteMenu")
+  .onclick = ()=>{
+
+    const key =
+      selectedMenuKey();
+
+    if (!menus[key]){
+
+      alert(
+        "Aucun menu enregistré ici."
+      );
+
+      return;
+    }
+
+    if (
+      !confirm(
+        "Supprimer ce menu enregistré ?"
+      )
+    ){
+      return;
+    }
+
+    delete menus[key];
+
+    saveMenus();
+
+    updateMenuStatus();
+  };
+
+/* -------------------------
+   CHANGEMENTS SELECT
+------------------------- */
+
+document
+  .getElementById("menuMeal")
+  .onchange =
+    updateMenuStatus;
+
+document
+  .getElementById("menuSlot")
+  .onchange =
+    updateMenuStatus;
+
+/* -------------------------
+   EFFACER JOURNÉE
+------------------------- */
+
 document
   .getElementById("clear")
   .onclick = ()=>{
 
     if (
       confirm(
-        "Effacer toutes les entrées d’aujourd’hui ?"
+        "Effacer toutes les entrées d’aujourd’hui ? Les menus enregistrés seront conservés."
       )
     ){
 
       data = {
-        date:
-          localDateKey(),
+        date:localDateKey(),
         items:[]
       };
 
-      save();
+      saveDay();
 
       render();
     }
   };
 
-save();
-
+saveDay();
+saveMenus();
 render();
 
 </script>
