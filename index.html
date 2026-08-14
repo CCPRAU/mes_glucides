@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111111">
+  <title>Mes Glucides V1</title>
+
+  <style>
+    :root{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color-scheme:light dark;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      background:#f4f4f7;
+      color:#111;
+    }
+
+    .wrap{
+      max-width:560px;
+      margin:auto;
+      padding:18px 16px 40px;
+    }
+
+    h1{
+      font-size:30px;
+      margin:8px 0 4px;
+    }
+
+    .sub{
+      color:#666;
+      margin-bottom:18px;
+    }
+
+    .card{
+      background:#fff;
+      border-radius:18px;
+      padding:16px;
+      margin:12px 0;
+      box-shadow:0 1px 8px rgba(0,0,0,.06);
+    }
+
+    label{
+      display:block;
+      font-weight:650;
+      margin-top:12px;
+      margin-bottom:6px;
+    }
+
+    input{
+      width:100%;
+      font-size:20px;
+      padding:13px;
+      border:1px solid #ccc;
+      border-radius:12px;
+      background:#fff;
+      color:#111;
+    }
+
+    button{
+      width:100%;
+      font-size:19px;
+      font-weight:700;
+      padding:14px;
+      border:0;
+      border-radius:14px;
+      margin-top:14px;
+    }
+
+    .primary{
+      background:#111;
+      color:#fff;
+    }
+
+    .secondary{
+      background:#e9e9ee;
+      color:#111;
+    }
+
+    .total{
+      font-size:42px;
+      font-weight:800;
+      line-height:1;
+    }
+
+    .unit{
+      font-size:18px;
+      color:#666;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:12px 0;
+      border-bottom:1px solid #eee;
+    }
+
+    .row:last-child{
+      border-bottom:0;
+    }
+
+    .grow{
+      flex:1;
+    }
+
+    .food{
+      font-weight:700;
+    }
+
+    .meta{
+      font-size:14px;
+      color:#666;
+      margin-top:2px;
+    }
+
+    .grams{
+      font-weight:800;
+      font-size:19px;
+    }
+
+    .del{
+      width:auto;
+      margin:0;
+      padding:8px 10px;
+      font-size:14px;
+      background:#eee;
+      color:#333;
+      border-radius:10px;
+    }
+
+    .empty{
+      color:#777;
+      text-align:center;
+      padding:18px 4px;
+    }
+
+    .hint{
+      font-size:13px;
+      color:#777;
+      margin-top:8px;
+    }
+
+    @media (prefers-color-scheme:dark){
+      body{
+        background:#000;
+        color:#fff;
+      }
+
+      .card{
+        background:#171719;
+      }
+
+      input{
+        background:#0d0d0e;
+        color:#fff;
+        border-color:#444;
+      }
+
+      .sub,
+      .unit,
+      .meta,
+      .hint,
+      .empty{
+        color:#aaa;
+      }
+
+      .row{
+        border-color:#333;
+      }
+
+      .secondary,
+      .del{
+        background:#2b2b2e;
+        color:#fff;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <h1>Mes Glucides</h1>
+  <div class="sub">V1 — suivi simple sur iPhone</div>
+
+  <div class="card">
+
+    <label for="food">Aliment</label>
+    <input id="food" placeholder="Ex. Pain">
+
+    <label for="qty">Quantité</label>
+    <input
+      id="qty"
+      inputmode="decimal"
+      type="number"
+      min="0"
+      step="0.1"
+      placeholder="Ex. 2"
+    >
+
+    <label for="carbs">Glucides par unité/portion (g)</label>
+    <input
+      id="carbs"
+      inputmode="decimal"
+      type="number"
+      min="0"
+      step="0.1"
+      placeholder="Ex. 15"
+    >
+
+    <button class="primary" id="add">
+      Ajouter au repas
+    </button>
+
+    <div class="hint">
+      Exemple : Pain · quantité 2 · 15 g/portion = 30 g.
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <div>Aujourd'hui</div>
+
+    <div>
+      <span class="total" id="dayTotal">0</span>
+      <span class="unit">g de glucides</span>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <h2 style="margin-top:0">Entrées</h2>
+
+    <div id="list"></div>
+
+    <button class="secondary" id="clear">
+      Nouvelle journée / Effacer tout
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+
+const KEY = "mes_glucides_v1";
+
+const today = () =>
+  new Date().toISOString().slice(0,10);
+
+let data =
+  JSON.parse(localStorage.getItem(KEY) || "{}");
+
+if (data.date !== today()) {
+  data = {
+    date: today(),
+    items: []
+  };
+}
+
+if (!Array.isArray(data.items)) {
+  data.items = [];
+}
+
+function save(){
+  localStorage.setItem(
+    KEY,
+    JSON.stringify(data)
+  );
+}
+
+function fmt(n){
+  return Number(n).toLocaleString(
+    "fr-CA",
+    {maximumFractionDigits:1}
+  );
+}
+
+function render(){
+
+  const list =
+    document.getElementById("list");
+
+  const total =
+    data.items.reduce(
+      (s,x) => s + x.total,
+      0
+    );
+
+  document
+    .getElementById("dayTotal")
+    .textContent = fmt(total);
+
+  if (!data.items.length){
+
+    list.innerHTML =
+      '<div class="empty">Aucune entrée aujourd’hui.</div>';
+
+    return;
+  }
+
+  list.innerHTML = "";
+
+  data.items.forEach((x,i)=>{
+
+    const row =
+      document.createElement("div");
+
+    row.className = "row";
+
+    row.innerHTML = `
+      <div class="grow">
+        <div class="food"></div>
+        <div class="meta"></div>
+      </div>
+
+      <div class="grams">
+        ${fmt(x.total)} g
+      </div>
+
+      <button
+        class="del"
+        aria-label="Supprimer">
+        Suppr.
+      </button>
+    `;
+
+    row
+      .querySelector(".food")
+      .textContent = x.food;
+
+    row
+      .querySelector(".meta")
+      .textContent =
+        `${fmt(x.qty)} × ${fmt(x.carbs)} g`;
+
+    row
+      .querySelector(".del")
+      .onclick = ()=>{
+
+        data.items.splice(i,1);
+
+        save();
+        render();
+      };
+
+    list.appendChild(row);
+  });
+}
+
+document
+  .getElementById("add")
+  .onclick = ()=>{
+
+    const food =
+      document
+        .getElementById("food")
+        .value
+        .trim();
+
+    const qty =
+      Number(
+        document
+          .getElementById("qty")
+          .value
+      );
+
+    const carbs =
+      Number(
+        document
+          .getElementById("carbs")
+          .value
+      );
+
+    if (
+      !food ||
+      !(qty > 0) ||
+      carbs < 0 ||
+      Number.isNaN(carbs)
+    ){
+      alert(
+        "Entre un aliment, une quantité et les glucides par portion."
+      );
+
+      return;
+    }
+
+    data.items.push({
+      food,
+      qty,
+      carbs,
+      total: qty * carbs,
+      time: Date.now()
+    });
+
+    save();
+    render();
+
+    document.getElementById("food").value = "";
+    document.getElementById("qty").value = "";
+    document.getElementById("carbs").value = "";
+
+    document.getElementById("food").focus();
+  };
+
+document
+  .getElementById("clear")
+  .onclick = ()=>{
+
+    if (
+      confirm(
+        "Effacer toutes les entrées d’aujourd’hui ?"
+      )
+    ){
+      data = {
+        date: today(),
+        items: []
+      };
+
+      save();
+      render();
+    }
+  };
+
+save();
+render();
+
+</script>
+
+</body>
+</html>
