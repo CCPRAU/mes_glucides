@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#111111">
-  <title>Mes Glucides V1</title>
+  <title>Mes Glucides V1.1</title>
 
   <style>
     :root{
@@ -12,7 +12,9 @@
       color-scheme:light dark;
     }
 
-    *{box-sizing:border-box}
+    *{
+      box-sizing:border-box;
+    }
 
     body{
       margin:0;
@@ -31,8 +33,18 @@
       margin:8px 0 4px;
     }
 
+    h2{
+      margin-top:0;
+    }
+
     .sub{
       color:#666;
+      margin-bottom:6px;
+    }
+
+    .date{
+      color:#555;
+      font-weight:650;
       margin-bottom:18px;
     }
 
@@ -51,7 +63,8 @@
       margin-bottom:6px;
     }
 
-    input{
+    input,
+    select{
       width:100%;
       font-size:20px;
       padding:13px;
@@ -69,6 +82,7 @@
       border:0;
       border-radius:14px;
       margin-top:14px;
+      cursor:pointer;
     }
 
     .primary{
@@ -90,6 +104,26 @@
     .unit{
       font-size:18px;
       color:#666;
+    }
+
+    .meal-total{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      padding:11px 0;
+      border-bottom:1px solid #eee;
+    }
+
+    .meal-total:last-child{
+      border-bottom:0;
+    }
+
+    .meal-name{
+      font-weight:700;
+    }
+
+    .meal-value{
+      font-weight:800;
     }
 
     .row{
@@ -115,12 +149,13 @@
     .meta{
       font-size:14px;
       color:#666;
-      margin-top:2px;
+      margin-top:3px;
     }
 
     .grams{
       font-weight:800;
       font-size:19px;
+      white-space:nowrap;
     }
 
     .del{
@@ -145,7 +180,16 @@
       margin-top:8px;
     }
 
+    .suggestion{
+      margin-top:8px;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#f0f0f3;
+      font-size:14px;
+    }
+
     @media (prefers-color-scheme:dark){
+
       body{
         background:#000;
         color:#fff;
@@ -155,13 +199,15 @@
         background:#171719;
       }
 
-      input{
+      input,
+      select{
         background:#0d0d0e;
         color:#fff;
         border-color:#444;
       }
 
       .sub,
+      .date,
       .unit,
       .meta,
       .hint,
@@ -169,12 +215,14 @@
         color:#aaa;
       }
 
-      .row{
+      .row,
+      .meal-total{
         border-color:#333;
       }
 
       .secondary,
-      .del{
+      .del,
+      .suggestion{
         background:#2b2b2e;
         color:#fff;
       }
@@ -187,14 +235,37 @@
 <div class="wrap">
 
   <h1>Mes Glucides</h1>
-  <div class="sub">V1 — suivi simple sur iPhone</div>
+
+  <div class="sub">
+    V1.1 — repas et date réelle
+  </div>
+
+  <div class="date" id="dateLabel"></div>
 
   <div class="card">
 
+    <label for="meal">Repas</label>
+
+    <select id="meal">
+      <option value="dejeuner">Déjeuner</option>
+      <option value="diner">Dîner</option>
+      <option value="collation">Collation</option>
+      <option value="souper">Souper</option>
+      <option value="dodo">Goûter avant dodo</option>
+    </select>
+
+    <div class="suggestion" id="suggestion"></div>
+
     <label for="food">Aliment</label>
-    <input id="food" placeholder="Ex. Pain">
+
+    <input
+      id="food"
+      placeholder="Ex. Pain"
+      autocomplete="off"
+    >
 
     <label for="qty">Quantité</label>
+
     <input
       id="qty"
       inputmode="decimal"
@@ -204,7 +275,10 @@
       placeholder="Ex. 2"
     >
 
-    <label for="carbs">Glucides par unité/portion (g)</label>
+    <label for="carbs">
+      Glucides par unité/portion (g)
+    </label>
+
     <input
       id="carbs"
       inputmode="decimal"
@@ -237,12 +311,20 @@
 
   <div class="card">
 
-    <h2 style="margin-top:0">Entrées</h2>
+    <h2>Totaux par repas</h2>
+
+    <div id="mealTotals"></div>
+
+  </div>
+
+  <div class="card">
+
+    <h2>Entrées</h2>
 
     <div id="list"></div>
 
     <button class="secondary" id="clear">
-      Nouvelle journée / Effacer tout
+      Effacer la journée
     </button>
 
   </div>
@@ -253,24 +335,101 @@
 
 const KEY = "mes_glucides_v1";
 
-const today = () =>
-  new Date().toISOString().slice(0,10);
+const MEALS = {
+  dejeuner: "Déjeuner",
+  diner: "Dîner",
+  collation: "Collation",
+  souper: "Souper",
+  dodo: "Goûter avant dodo"
+};
+
+function localDateKey(){
+
+  const d = new Date();
+
+  const year = d.getFullYear();
+
+  const month =
+    String(d.getMonth() + 1).padStart(2, "0");
+
+  const day =
+    String(d.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function prettyDate(){
+
+  return new Date().toLocaleDateString(
+    "fr-CA",
+    {
+      weekday:"long",
+      year:"numeric",
+      month:"long",
+      day:"numeric"
+    }
+  );
+}
+
+function suggestedMeal(){
+
+  const hour =
+    new Date().getHours();
+
+  if (hour < 10){
+    return "dejeuner";
+  }
+
+  if (hour < 14){
+    return "diner";
+  }
+
+  if (hour < 17){
+    return "collation";
+  }
+
+  if (hour < 21){
+    return "souper";
+  }
+
+  return "dodo";
+}
 
 let data =
-  JSON.parse(localStorage.getItem(KEY) || "{}");
+  JSON.parse(
+    localStorage.getItem(KEY) || "{}"
+  );
 
-if (data.date !== today()) {
+if (data.date !== localDateKey()){
+
   data = {
-    date: today(),
+    date: localDateKey(),
     items: []
   };
 }
 
-if (!Array.isArray(data.items)) {
+if (!Array.isArray(data.items)){
+
   data.items = [];
 }
 
+/*
+Compatibilité V1 :
+les anciennes entrées n'avaient pas de repas.
+On les place dans le repas suggéré.
+*/
+data.items =
+  data.items.map(item => ({
+
+    ...item,
+
+    meal:
+      item.meal ||
+      suggestedMeal()
+  }));
+
 function save(){
+
   localStorage.setItem(
     KEY,
     JSON.stringify(data)
@@ -278,10 +437,53 @@ function save(){
 }
 
 function fmt(n){
+
   return Number(n).toLocaleString(
     "fr-CA",
-    {maximumFractionDigits:1}
+    {
+      maximumFractionDigits:1
+    }
   );
+}
+
+function mealTotal(meal){
+
+  return data.items
+    .filter(x => x.meal === meal)
+    .reduce(
+      (sum,x) => sum + Number(x.total || 0),
+      0
+    );
+}
+
+function renderMealTotals(){
+
+  const container =
+    document.getElementById("mealTotals");
+
+  container.innerHTML = "";
+
+  Object.entries(MEALS)
+    .forEach(([key,label]) => {
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "meal-total";
+
+      row.innerHTML = `
+        <div class="meal-name">
+          ${label}
+        </div>
+
+        <div class="meal-value">
+          ${fmt(mealTotal(key))} g
+        </div>
+      `;
+
+      container.appendChild(row);
+    });
 }
 
 function render(){
@@ -291,13 +493,17 @@ function render(){
 
   const total =
     data.items.reduce(
-      (s,x) => s + x.total,
+      (s,x) =>
+        s + Number(x.total || 0),
       0
     );
 
   document
     .getElementById("dayTotal")
-    .textContent = fmt(total);
+    .textContent =
+      fmt(total);
+
+  renderMealTotals();
 
   if (!data.items.length){
 
@@ -314,12 +520,16 @@ function render(){
     const row =
       document.createElement("div");
 
-    row.className = "row";
+    row.className =
+      "row";
 
     row.innerHTML = `
       <div class="grow">
+
         <div class="food"></div>
+
         <div class="meta"></div>
+
       </div>
 
       <div class="grams">
@@ -335,12 +545,13 @@ function render(){
 
     row
       .querySelector(".food")
-      .textContent = x.food;
+      .textContent =
+        x.food;
 
     row
       .querySelector(".meta")
       .textContent =
-        `${fmt(x.qty)} × ${fmt(x.carbs)} g`;
+        `${MEALS[x.meal]} · ${fmt(x.qty)} × ${fmt(x.carbs)} g`;
 
     row
       .querySelector(".del")
@@ -349,6 +560,7 @@ function render(){
         data.items.splice(i,1);
 
         save();
+
         render();
       };
 
@@ -356,9 +568,31 @@ function render(){
   });
 }
 
+const mealSelect =
+  document.getElementById("meal");
+
+const initialMeal =
+  suggestedMeal();
+
+mealSelect.value =
+  initialMeal;
+
+document
+  .getElementById("suggestion")
+  .textContent =
+    `Repas suggéré maintenant : ${MEALS[initialMeal]}`;
+
+document
+  .getElementById("dateLabel")
+  .textContent =
+    prettyDate();
+
 document
   .getElementById("add")
   .onclick = ()=>{
+
+    const meal =
+      mealSelect.value;
 
     const food =
       document
@@ -386,6 +620,7 @@ document
       carbs < 0 ||
       Number.isNaN(carbs)
     ){
+
       alert(
         "Entre un aliment, une quantité et les glucides par portion."
       );
@@ -394,21 +629,36 @@ document
     }
 
     data.items.push({
+
+      meal,
       food,
       qty,
       carbs,
-      total: qty * carbs,
-      time: Date.now()
+      total:
+        qty * carbs,
+      time:
+        Date.now()
     });
 
     save();
+
     render();
 
-    document.getElementById("food").value = "";
-    document.getElementById("qty").value = "";
-    document.getElementById("carbs").value = "";
+    document
+      .getElementById("food")
+      .value = "";
 
-    document.getElementById("food").focus();
+    document
+      .getElementById("qty")
+      .value = "";
+
+    document
+      .getElementById("carbs")
+      .value = "";
+
+    document
+      .getElementById("food")
+      .focus();
   };
 
 document
@@ -420,17 +670,21 @@ document
         "Effacer toutes les entrées d’aujourd’hui ?"
       )
     ){
+
       data = {
-        date: today(),
-        items: []
+        date:
+          localDateKey(),
+        items:[]
       };
 
       save();
+
       render();
     }
   };
 
 save();
+
 render();
 
 </script>
