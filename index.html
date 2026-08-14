@@ -4,938 +4,114 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#111111">
-  <title>Mes Glucides V1.3</title>
-
+  <title>Mes Glucides V1.4</title>
   <style>
-    :root{
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      color-scheme:light dark;
-    }
-
+    :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color-scheme:light dark}
     *{box-sizing:border-box}
-
-    body{
-      margin:0;
-      background:#f4f4f7;
-      color:#111;
-    }
-
-    .wrap{
-      max-width:560px;
-      margin:auto;
-      padding:18px 16px 40px;
-    }
-
-    h1{
-      font-size:30px;
-      margin:8px 0 4px;
-    }
-
-    h2{
-      margin:0 0 12px;
-      font-size:22px;
-    }
-
-    .sub{
-      color:#666;
-      margin-bottom:6px;
-    }
-
-    .date{
-      color:#555;
-      font-weight:650;
-      margin-bottom:18px;
-      text-transform:capitalize;
-    }
-
-    .card{
-      background:#fff;
-      border-radius:18px;
-      padding:16px;
-      margin:12px 0;
-      box-shadow:0 1px 8px rgba(0,0,0,.06);
-    }
-
-    .tabs{
-      display:flex;
-      gap:8px;
-      overflow-x:auto;
-      padding-bottom:4px;
-      scrollbar-width:none;
-    }
-
-    .tabs::-webkit-scrollbar{
-      display:none;
-    }
-
-    .tab{
-      flex:0 0 auto;
-      width:auto;
-      margin:0;
-      padding:10px 14px;
-      border-radius:999px;
-      background:#e9e9ee;
-      color:#111;
-      font-size:15px;
-      font-weight:700;
-    }
-
-    .tab.active{
-      background:#111;
-      color:#fff;
-    }
-
-    label{
-      display:block;
-      font-weight:650;
-      margin-top:12px;
-      margin-bottom:6px;
-    }
-
-    input,
-    select{
-      width:100%;
-      font-size:20px;
-      padding:13px;
-      border:1px solid #ccc;
-      border-radius:12px;
-      background:#fff;
-      color:#111;
-    }
-
-    button{
-      width:100%;
-      font-size:18px;
-      font-weight:700;
-      padding:14px;
-      border:0;
-      border-radius:14px;
-      margin-top:12px;
-      cursor:pointer;
-    }
-
-    .primary{
-      background:#111;
-      color:#fff;
-    }
-
-    .secondary{
-      background:#e9e9ee;
-      color:#111;
-    }
-
-    .danger{
-      background:#f2dddd;
-      color:#8a1111;
-    }
-
-    .total{
-      font-size:42px;
-      font-weight:800;
-      line-height:1;
-    }
-
-    .unit{
-      font-size:18px;
-      color:#666;
-    }
-
-    .menu-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .menu-card{
-      border:1px solid #e3e3e8;
-      border-radius:14px;
-      padding:14px;
-      background:#fafafa;
-      min-height:120px;
-    }
-
-    .menu-card h3{
-      margin:0 0 8px;
-      font-size:18px;
-    }
-
-    .menu-total{
-      font-size:26px;
-      font-weight:800;
-      margin-top:8px;
-    }
-
-    .menu-meta{
-      font-size:13px;
-      color:#666;
-    }
-
-    .menu-card button{
-      margin-top:10px;
-      padding:10px;
-      font-size:15px;
-    }
-
-    .row{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      padding:12px 0;
-      border-bottom:1px solid #eee;
-    }
-
-    .row:last-child{
-      border-bottom:0;
-    }
-
-    .grow{flex:1}
-
-    .food{
-      font-weight:700;
-    }
-
-    .meta{
-      font-size:14px;
-      color:#666;
-      margin-top:3px;
-    }
-
-    .grams{
-      font-weight:800;
-      font-size:19px;
-      white-space:nowrap;
-    }
-
-    .del{
-      width:auto;
-      margin:0;
-      padding:8px 10px;
-      font-size:14px;
-      background:#eee;
-      color:#333;
-      border-radius:10px;
-    }
-
-    .empty{
-      color:#777;
-      text-align:center;
-      padding:18px 4px;
-    }
-
-    .hint{
-      font-size:13px;
-      color:#777;
-      margin-top:8px;
-    }
-
-    .suggestion{
-      margin-top:8px;
-      padding:10px 12px;
-      border-radius:12px;
-      background:#f0f0f3;
-      font-size:14px;
-    }
-
-    .section-head{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      margin-bottom:10px;
-    }
-
-    .section-head .value{
-      font-weight:800;
-      font-size:24px;
-    }
-
-    @media (max-width:420px){
-      .menu-grid{
-        grid-template-columns:1fr;
-      }
-    }
-
-    @media (prefers-color-scheme:dark){
-
-      body{
-        background:#000;
-        color:#fff;
-      }
-
-      .card{
-        background:#171719;
-      }
-
-      input,
-      select{
-        background:#0d0d0e;
-        color:#fff;
-        border-color:#444;
-      }
-
-      .sub,
-      .date,
-      .unit,
-      .meta,
-      .hint,
-      .empty,
-      .menu-meta{
-        color:#aaa;
-      }
-
-      .row{
-        border-color:#333;
-      }
-
-      .secondary,
-      .del,
-      .suggestion,
-      .tab{
-        background:#2b2b2e;
-        color:#fff;
-      }
-
-      .tab.active{
-        background:#fff;
-        color:#111;
-      }
-
-      .menu-card{
-        background:#111;
-        border-color:#333;
-      }
-
-      .danger{
-        background:#3b2020;
-        color:#ffb5b5;
-      }
-    }
+    body{margin:0;background:#f4f4f7;color:#111}
+    .wrap{max-width:620px;margin:auto;padding:18px 16px 40px}
+    h1{font-size:30px;margin:8px 0 4px} h2{margin:0 0 12px;font-size:22px} h3{margin:0 0 8px}
+    .sub,.meta,.hint,.menu-meta{color:#666}.sub{margin-bottom:6px}.date{color:#555;font-weight:650;margin-bottom:18px;text-transform:capitalize}
+    .card{background:#fff;border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 1px 8px rgba(0,0,0,.06)}
+    .nav,.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}.nav::-webkit-scrollbar,.tabs::-webkit-scrollbar{display:none}
+    button{width:100%;font-size:17px;font-weight:700;padding:13px;border:0;border-radius:14px;margin-top:12px;cursor:pointer}
+    .nav button,.tab{flex:0 0 auto;width:auto;margin:0;padding:10px 14px;border-radius:999px;background:#e9e9ee;color:#111;font-size:15px}
+    .nav button.active,.tab.active,.primary{background:#111;color:#fff}.secondary{background:#e9e9ee;color:#111}.danger{background:#f2dddd;color:#8a1111}
+    .small{width:auto;margin:0;padding:8px 10px;font-size:14px;border-radius:10px}
+    label{display:block;font-weight:650;margin-top:12px;margin-bottom:6px}
+    input,select,textarea{width:100%;font:inherit;font-size:18px;padding:12px;border:1px solid #ccc;border-radius:12px;background:#fff;color:#111} textarea{min-height:80px;resize:vertical}
+    .screen{display:none}.screen.active{display:block}.total{font-size:42px;font-weight:800;line-height:1}.unit{font-size:18px;color:#666}
+    .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.menu-card{border:1px solid #e3e3e8;border-radius:14px;padding:14px;background:#fafafa}.menu-total{font-size:26px;font-weight:800;margin-top:8px}
+    .row{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #eee}.row:last-child{border-bottom:0}.grow{flex:1;min-width:0}.food{font-weight:700}.meta{font-size:14px;margin-top:3px}.grams{font-weight:800;font-size:18px;white-space:nowrap}.actions{display:flex;gap:6px}.empty{color:#777;text-align:center;padding:18px 4px}.hint{font-size:13px;margin-top:8px}
+    .suggestion,.notice{margin-top:8px;padding:10px 12px;border-radius:12px;background:#f0f0f3;font-size:14px}.notice{border-left:4px solid #777}
+    .section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.section-head .value{font-weight:800;font-size:24px}
+    .dose-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}.dose-box{background:#f0f0f3;border-radius:14px;padding:12px 6px}.dose-box strong{display:block;font-size:26px}.dose-box span{font-size:12px;color:#666}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end}.chart-row button{margin-bottom:1px}
+    dialog{border:0;border-radius:18px;padding:0;max-width:520px;width:calc(100% - 32px);background:#fff;color:#111;box-shadow:0 12px 60px rgba(0,0,0,.35)}dialog::backdrop{background:rgba(0,0,0,.55)}.dialog-body{padding:18px}.dialog-actions{display:flex;gap:8px}.dialog-actions button{margin-top:14px}
+    @media(max-width:460px){.menu-grid,.form-grid{grid-template-columns:1fr}.dose-grid{grid-template-columns:1fr}.dose-box{display:flex;justify-content:space-between;align-items:center}.dose-box strong{font-size:23px}.row{align-items:flex-start;flex-wrap:wrap}.actions{margin-left:auto}}
+    @media(prefers-color-scheme:dark){body{background:#000;color:#fff}.card,dialog{background:#171719;color:#fff}input,select,textarea{background:#0d0d0e;color:#fff;border-color:#444}.sub,.date,.unit,.meta,.hint,.empty,.menu-meta{color:#aaa}.row{border-color:#333}.secondary,.nav button,.tab,.suggestion,.notice,.dose-box{background:#2b2b2e;color:#fff}.nav button.active,.tab.active{background:#fff;color:#111}.menu-card{background:#111;border-color:#333}.danger{background:#3b2020;color:#ffb5b5}.dose-box span{color:#aaa}}
   </style>
 </head>
-
 <body>
-
 <div class="wrap">
+  <h1>Mes Glucides</h1><div class="sub">V1.4 — repas, insuline et médicaments</div><div class="date" id="dateLabel"></div>
+  <div class="card"><nav class="nav" aria-label="Sections"><button data-screen="repas" class="active">Repas</button><button data-screen="parametres">Mes ratios</button><button data-screen="medicaments">Médicaments</button></nav></div>
 
-  <h1>Mes Glucides</h1>
-  <div class="sub">V1.3 — fiches par repas</div>
-  <div class="date" id="dateLabel"></div>
+  <main id="repas" class="screen active">
+    <div class="card"><h2>Repas</h2><div class="tabs" id="mealTabs"></div><div class="suggestion" id="suggestion"></div></div>
+    <div class="card"><div class="section-head"><h2 id="menusTitle">Menus</h2><div class="value" id="selectedMealTotal">0 g</div></div><div class="menu-grid" id="menuGrid"></div></div>
+    <div class="card"><h2>Ajouter un aliment</h2><label for="food">Aliment</label><input id="food" placeholder="Ex. Pain" autocomplete="off"><div class="form-grid"><div><label for="qty">Quantité</label><input id="qty" inputmode="decimal" type="number" min="0" step="0.1" placeholder="Ex. 2"></div><div><label for="carbs">Glucides par unité/portion (g)</label><input id="carbs" inputmode="decimal" type="number" min="0" step="0.1" placeholder="Ex. 15"></div></div><button class="primary" id="add">Ajouter au repas sélectionné</button></div>
+    <div class="card"><h2>Calcul Trurapi — <span id="doseMealName"></span></h2><label for="glucose">Glycémie avant le repas (mmol/L)</label><input id="glucose" type="number" inputmode="decimal" min="0" step="0.1" placeholder="Ex. 8,5"><div class="dose-grid" style="margin-top:14px"><div class="dose-box"><span>Dose glucides</span><strong id="carbDose">—</strong></div><div class="dose-box"><span>Ajustement</span><strong id="adjustmentDose">—</strong></div><div class="dose-box"><span>Total calculé</span><strong id="totalDose">—</strong></div></div><div class="hint" id="doseHint"></div><div class="notice">Outil de calcul selon vos paramètres enregistrés. Vérifiez toujours la dose avant de l’administrer et suivez les consignes de votre équipe de soins.</div></div>
+    <div class="card"><div>Aujourd'hui</div><div><span class="total" id="dayTotal">0</span> <span class="unit">g de glucides</span></div></div>
+    <div class="card"><div class="section-head"><h2 id="entriesTitle">Entrées</h2><button class="secondary small" id="toggleAll">Voir toute la journée</button></div><div id="list"></div><button class="secondary" id="clear">Effacer la journée</button></div>
+  </main>
 
-  <div class="card">
-    <h2>Repas</h2>
-    <div class="tabs" id="mealTabs"></div>
-    <div class="suggestion" id="suggestion"></div>
-  </div>
+  <section id="parametres" class="screen">
+    <div class="card"><h2>Mes ratios personnels</h2><p class="meta">La dose repas est calculée ainsi : glucides totaux ÷ ratio. Un ratio de 0 désactive le calcul.</p><div id="ratioFields"></div><button class="primary" id="saveRatios">Enregistrer les ratios</button></div>
+    <div class="card"><h2>Charte personnelle Trurapi</h2><p class="meta">Chaque seuil s’applique à partir de la glycémie indiquée, jusqu’au seuil suivant.</p><div id="chartFields"></div><button class="secondary" id="addChartRow">Ajouter un seuil</button><button class="primary" id="saveChart">Enregistrer la charte</button><button class="secondary" id="resetChart">Remettre les valeurs par défaut</button></div>
+  </section>
 
-  <div class="card">
-    <div class="section-head">
-      <h2 id="menusTitle">Menus</h2>
-      <div class="value" id="selectedMealTotal">0 g</div>
-    </div>
-
-    <div class="menu-grid" id="menuGrid"></div>
-  </div>
-
-  <div class="card">
-    <h2>Ajouter un aliment</h2>
-
-    <label for="food">Aliment</label>
-    <input id="food" placeholder="Ex. Pain" autocomplete="off">
-
-    <label for="qty">Quantité</label>
-    <input
-      id="qty"
-      inputmode="decimal"
-      type="number"
-      min="0"
-      step="0.1"
-      placeholder="Ex. 2"
-    >
-
-    <label for="carbs">
-      Glucides par unité/portion (g)
-    </label>
-    <input
-      id="carbs"
-      inputmode="decimal"
-      type="number"
-      min="0"
-      step="0.1"
-      placeholder="Ex. 15"
-    >
-
-    <button class="primary" id="add">
-      Ajouter au repas sélectionné
-    </button>
-  </div>
-
-  <div class="card">
-    <div>Aujourd'hui</div>
-    <div>
-      <span class="total" id="dayTotal">0</span>
-      <span class="unit">g de glucides</span>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="section-head">
-      <h2 id="entriesTitle">Entrées</h2>
-      <button class="secondary" id="toggleAll" style="width:auto;margin:0;padding:8px 10px;font-size:14px">
-        Voir toute la journée
-      </button>
-    </div>
-
-    <div id="list"></div>
-
-    <button class="secondary" id="clear">
-      Effacer la journée
-    </button>
-  </div>
-
+  <section id="medicaments" class="screen">
+    <div class="card"><div class="section-head"><h2>Médicaments et matériel</h2><button class="primary small" id="addMedication">Ajouter</button></div><div id="medicationList"></div></div>
+  </section>
 </div>
 
+<dialog id="foodDialog"><form method="dialog" class="dialog-body" id="foodForm"><h2 id="foodDialogTitle">Modifier l’aliment</h2><label for="editFood">Aliment</label><input id="editFood" required><div class="form-grid"><div><label for="editQty">Quantité</label><input id="editQty" type="number" min="0.1" step="0.1" required></div><div><label for="editCarbs">Glucides/portion (g)</label><input id="editCarbs" type="number" min="0" step="0.1" required></div></div><div class="dialog-actions"><button value="cancel" class="secondary">Annuler</button><button value="default" class="primary" id="confirmFoodEdit">Enregistrer</button></div></form></dialog>
+<dialog id="menuDialog"><div class="dialog-body"><h2 id="menuDialogTitle">Modifier le menu</h2><div id="menuItemList"></div><div class="dialog-actions"><button class="secondary" id="closeMenuDialog">Fermer</button></div></div></dialog>
+<dialog id="medDialog"><form method="dialog" class="dialog-body"><h2 id="medDialogTitle">Médicament</h2><label for="medName">Nom</label><input id="medName" required><div class="form-grid"><div><label for="medDose">Dose</label><input id="medDose" placeholder="Ex. 3 mg"></div><div><label for="medMoment">Moment</label><input id="medMoment" placeholder="Ex. Au coucher"></div><div><label for="medFrequency">Fréquence / PRN</label><input id="medFrequency" placeholder="Ex. 1 fois/semaine ou PRN"></div></div><label for="medNotes">Notes</label><textarea id="medNotes"></textarea><div class="dialog-actions"><button value="cancel" class="secondary">Annuler</button><button value="default" class="primary" id="confirmMed">Enregistrer</button></div></form></dialog>
+
 <script>
-
-const DAY_KEY = "mes_glucides_v1";
-const MENU_KEY = "mes_glucides_menus_v12";
-
-const MEALS = {
-  dejeuner: "Déjeuner",
-  diner: "Dîner",
-  collation: "Collation",
-  souper: "Souper",
-  dodo: "Avant dodo"
-};
-
-const DAYS = [
-  "dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"
+const DAY_KEY="mes_glucides_v1", MENU_KEY="mes_glucides_menus_v12", SETTINGS_KEY="mes_glucides_settings_v14", MEDS_KEY="mes_glucides_medications_v14";
+const MEALS={dejeuner:"Déjeuner",diner:"Dîner",collation:"Collation",souper:"Souper",dodo:"Avant dodo"};
+const DEFAULT_RATIOS={dejeuner:4.5,diner:4.5,souper:6,collation:1,dodo:0};
+const DEFAULT_CHART=[{min:0,units:0},{min:7,units:1},{min:9,units:2},{min:11,units:3},{min:13,units:4},{min:15,units:5},{min:17,units:6}];
+const DEFAULT_MEDS=[
+  {name:"Ozempic",dose:"",moment:"",frequency:"",notes:""},{name:"Tresiba",dose:"",moment:"",frequency:"",notes:""},{name:"Trurapi",dose:"",moment:"Aux repas",frequency:"Selon les glucides et la charte",notes:""},
+  {name:"Aiguilles BD Nano 4 mm",dose:"",moment:"",frequency:"",notes:"Matériel"},{name:"FreeStyle Libre 2",dose:"",moment:"",frequency:"",notes:"Capteur de glycémie"},{name:"Dex4",dose:"",moment:"",frequency:"PRN",notes:""},{name:"BAQSIMI",dose:"3 mg",moment:"",frequency:"PRN",notes:""},{name:"Nitro",dose:"",moment:"",frequency:"",notes:""}
 ];
-
-let showAll = false;
-let selectedMeal = suggestedMeal();
-
-function localDateKey(){
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const day = String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${day}`;
-}
-
-function currentDay(){
-  return DAYS[new Date().getDay()];
-}
-
-function prettyDate(){
-  return new Date().toLocaleDateString(
-    "fr-CA",
-    {
-      weekday:"long",
-      year:"numeric",
-      month:"long",
-      day:"numeric"
-    }
-  );
-}
-
-function suggestedMeal(){
-  const hour = new Date().getHours();
-
-  if (hour < 10) return "dejeuner";
-  if (hour < 14) return "diner";
-  if (hour < 17) return "collation";
-  if (hour < 21) return "souper";
-
-  return "dodo";
-}
-
-function fmt(n){
-  return Number(n).toLocaleString(
-    "fr-CA",
-    {maximumFractionDigits:1}
-  );
-}
-
-let data =
-  JSON.parse(localStorage.getItem(DAY_KEY) || "{}");
-
-if (data.date !== localDateKey()){
-  data = {
-    date:localDateKey(),
-    items:[]
-  };
-}
-
-if (!Array.isArray(data.items)){
-  data.items = [];
-}
-
-data.items = data.items.map(item => ({
-  ...item,
-  meal:item.meal || suggestedMeal()
-}));
-
-let menus =
-  JSON.parse(localStorage.getItem(MENU_KEY) || "{}");
-
-function saveDay(){
-  localStorage.setItem(
-    DAY_KEY,
-    JSON.stringify(data)
-  );
-}
-
-function saveMenus(){
-  localStorage.setItem(
-    MENU_KEY,
-    JSON.stringify(menus)
-  );
-}
-
-function menuKey(meal,slot){
-  return `${currentDay()}__${meal}__${slot}`;
-}
-
-function mealTotal(meal){
-  return data.items
-    .filter(x => x.meal === meal)
-    .reduce(
-      (sum,x) => sum + Number(x.total || 0),
-      0
-    );
-}
-
-function dayTotal(){
-  return data.items.reduce(
-    (sum,x) => sum + Number(x.total || 0),
-    0
-  );
-}
-
-function renderTabs(){
-
-  const tabs =
-    document.getElementById("mealTabs");
-
-  tabs.innerHTML = "";
-
-  Object.entries(MEALS)
-    .forEach(([key,label]) => {
-
-      const btn =
-        document.createElement("button");
-
-      btn.className =
-        "tab" + (key === selectedMeal ? " active" : "");
-
-      btn.textContent =
-        label;
-
-      btn.onclick = ()=>{
-
-        selectedMeal = key;
-        showAll = false;
-        render();
-      };
-
-      tabs.appendChild(btn);
-    });
-}
-
-function renderMenus(){
-
-  const grid =
-    document.getElementById("menuGrid");
-
-  grid.innerHTML = "";
-
-  const slots = [
-    ["1","Menu 1"],
-    ["2","Menu 2"],
-    ["3","Menu 3"],
-    ["variante","Variante"]
-  ];
-
-  slots.forEach(([slot,label]) => {
-
-    const key =
-      menuKey(selectedMeal,slot);
-
-    const menu =
-      menus[key];
-
-    const card =
-      document.createElement("div");
-
-    card.className =
-      "menu-card";
-
-    if (!menu){
-
-      card.innerHTML = `
-        <h3>${label}</h3>
-        <div class="menu-meta">
-          Aucun menu enregistré
-        </div>
-
-        <button class="secondary">
-          Enregistrer le repas actuel
-        </button>
-      `;
-
-      card.querySelector("button")
-        .onclick = ()=>saveCurrentMealAsMenu(slot);
-
-      grid.appendChild(card);
-
-      return;
-    }
-
-    const total =
-      menu.items.reduce(
-        (s,x) => s + Number(x.total || 0),
-        0
-      );
-
-    card.innerHTML = `
-      <h3>${label}</h3>
-
-      <div class="menu-meta">
-        ${menu.items.length} aliment(s)
-      </div>
-
-      <div class="menu-total">
-        ${fmt(total)} g
-      </div>
-
-      <button class="primary">
-        Charger
-      </button>
-
-      <button class="secondary">
-        Remplacer
-      </button>
-
-      <button class="danger">
-        Supprimer
-      </button>
-    `;
-
-    const buttons =
-      card.querySelectorAll("button");
-
-    buttons[0].onclick =
-      ()=>loadMenu(slot);
-
-    buttons[1].onclick =
-      ()=>saveCurrentMealAsMenu(slot,true);
-
-    buttons[2].onclick =
-      ()=>deleteMenu(slot);
-
-    grid.appendChild(card);
-  });
-}
-
-function saveCurrentMealAsMenu(slot,force=false){
-
-  const items =
-    data.items
-      .filter(x => x.meal === selectedMeal)
-      .map(x => ({
-        food:x.food,
-        qty:x.qty,
-        carbs:x.carbs,
-        total:x.total
-      }));
-
-  if (!items.length){
-
-    alert(
-      "Aucun aliment dans ce repas à enregistrer."
-    );
-
-    return;
-  }
-
-  const key =
-    menuKey(selectedMeal,slot);
-
-  if (
-    menus[key] &&
-    !force &&
-    !confirm("Ce menu existe déjà. Le remplacer ?")
-  ){
-    return;
-  }
-
-  if (
-    menus[key] &&
-    force &&
-    !confirm("Remplacer ce menu enregistré ?")
-  ){
-    return;
-  }
-
-  menus[key] = {
-    day:currentDay(),
-    meal:selectedMeal,
-    slot,
-    items,
-    savedAt:Date.now()
-  };
-
-  saveMenus();
-  render();
-}
-
-function loadMenu(slot){
-
-  const menu =
-    menus[menuKey(selectedMeal,slot)];
-
-  if (!menu){
-    return;
-  }
-
-  menu.items.forEach(item => {
-
-    data.items.push({
-      meal:selectedMeal,
-      food:item.food,
-      qty:item.qty,
-      carbs:item.carbs,
-      total:item.total,
-      time:Date.now()
-    });
-  });
-
-  saveDay();
-  render();
-}
-
-function deleteMenu(slot){
-
-  const key =
-    menuKey(selectedMeal,slot);
-
-  if (!menus[key]){
-    return;
-  }
-
-  if (!confirm("Supprimer ce menu enregistré ?")){
-    return;
-  }
-
-  delete menus[key];
-
-  saveMenus();
-  render();
-}
-
-function renderEntries(){
-
-  const list =
-    document.getElementById("list");
-
-  const entries =
-    showAll
-      ? data.items
-      : data.items.filter(x => x.meal === selectedMeal);
-
-  document
-    .getElementById("entriesTitle")
-    .textContent =
-      showAll
-        ? "Toute la journée"
-        : `Entrées — ${MEALS[selectedMeal]}`;
-
-  document
-    .getElementById("toggleAll")
-    .textContent =
-      showAll
-        ? "Voir seulement ce repas"
-        : "Voir toute la journée";
-
-  if (!entries.length){
-
-    list.innerHTML =
-      '<div class="empty">Aucune entrée ici.</div>';
-
-    return;
-  }
-
-  list.innerHTML = "";
-
-  entries.forEach(entry => {
-
-    const realIndex =
-      data.items.indexOf(entry);
-
-    const row =
-      document.createElement("div");
-
-    row.className =
-      "row";
-
-    row.innerHTML = `
-      <div class="grow">
-        <div class="food"></div>
-        <div class="meta"></div>
-      </div>
-
-      <div class="grams">
-        ${fmt(entry.total)} g
-      </div>
-
-      <button class="del">
-        Suppr.
-      </button>
-    `;
-
-    row.querySelector(".food")
-      .textContent =
-        entry.food;
-
-    row.querySelector(".meta")
-      .textContent =
-        `${MEALS[entry.meal]} · ${fmt(entry.qty)} × ${fmt(entry.carbs)} g`;
-
-    row.querySelector(".del")
-      .onclick = ()=>{
-
-        data.items.splice(realIndex,1);
-
-        saveDay();
-        render();
-      };
-
-    list.appendChild(row);
-  });
-}
-
-function render(){
-
-  renderTabs();
-  renderMenus();
-  renderEntries();
-
-  document
-    .getElementById("menusTitle")
-    .textContent =
-      `Menus — ${MEALS[selectedMeal]}`;
-
-  document
-    .getElementById("selectedMealTotal")
-    .textContent =
-      `${fmt(mealTotal(selectedMeal))} g`;
-
-  document
-    .getElementById("dayTotal")
-    .textContent =
-      fmt(dayTotal());
-
-  document
-    .getElementById("suggestion")
-    .textContent =
-      `Repas suggéré maintenant : ${MEALS[suggestedMeal()]}`;
-}
-
-document
-  .getElementById("dateLabel")
-  .textContent =
-    prettyDate();
-
-document
-  .getElementById("add")
-  .onclick = ()=>{
-
-    const food =
-      document
-        .getElementById("food")
-        .value
-        .trim();
-
-    const qty =
-      Number(
-        document
-          .getElementById("qty")
-          .value
-      );
-
-    const carbs =
-      Number(
-        document
-          .getElementById("carbs")
-          .value
-      );
-
-    if (
-      !food ||
-      !(qty > 0) ||
-      carbs < 0 ||
-      Number.isNaN(carbs)
-    ){
-
-      alert(
-        "Entre un aliment, une quantité et les glucides par portion."
-      );
-
-      return;
-    }
-
-    data.items.push({
-      meal:selectedMeal,
-      food,
-      qty,
-      carbs,
-      total:qty * carbs,
-      time:Date.now()
-    });
-
-    saveDay();
-
-    document.getElementById("food").value = "";
-    document.getElementById("qty").value = "";
-    document.getElementById("carbs").value = "";
-
-    render();
-  };
-
-document
-  .getElementById("toggleAll")
-  .onclick = ()=>{
-
-    showAll = !showAll;
-
-    render();
-  };
-
-document
-  .getElementById("clear")
-  .onclick = ()=>{
-
-    if (
-      confirm(
-        "Effacer toutes les entrées d’aujourd’hui ? Les menus enregistrés seront conservés."
-      )
-    ){
-
-      data = {
-        date:localDateKey(),
-        items:[]
-      };
-
-      saveDay();
-      render();
-    }
-  };
-
-saveDay();
-saveMenus();
-render();
-
+const DAYS=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+let showAll=false,selectedMeal=suggestedMeal(),editingFood=null,editingMenuSlot=null,editingMedIndex=null;
+const parseStored=(key,fallback)=>{try{const value=JSON.parse(localStorage.getItem(key));return value??fallback}catch{return fallback}};
+function localDateKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function currentDay(){return DAYS[new Date().getDay()]}
+function suggestedMeal(){const h=new Date().getHours();return h<10?"dejeuner":h<14?"diner":h<17?"collation":h<21?"souper":"dodo"}
+function fmt(n,max=1){return Number(n).toLocaleString("fr-CA",{maximumFractionDigits:max})}
+function uid(){return `${Date.now()}-${Math.random().toString(16).slice(2)}`}
+let data=parseStored(DAY_KEY,{});if(data.date!==localDateKey())data={date:localDateKey(),items:[]};if(!Array.isArray(data.items))data.items=[];data.items=data.items.map(x=>({...x,id:x.id||uid(),meal:x.meal||suggestedMeal()}));
+let menus=parseStored(MENU_KEY,{});let settings=parseStored(SETTINGS_KEY,{ratios:DEFAULT_RATIOS,chart:DEFAULT_CHART});settings.ratios={...DEFAULT_RATIOS,...(settings.ratios||{})};settings.chart=Array.isArray(settings.chart)&&settings.chart.length?settings.chart:structuredClone(DEFAULT_CHART);
+let medications=parseStored(MEDS_KEY,null);if(!Array.isArray(medications))medications=structuredClone(DEFAULT_MEDS);
+const saveDay=()=>localStorage.setItem(DAY_KEY,JSON.stringify(data));const saveMenus=()=>localStorage.setItem(MENU_KEY,JSON.stringify(menus));const saveSettings=()=>localStorage.setItem(SETTINGS_KEY,JSON.stringify(settings));const saveMeds=()=>localStorage.setItem(MEDS_KEY,JSON.stringify(medications));
+const menuKey=(meal,slot)=>`${currentDay()}__${meal}__${slot}`;const mealItems=meal=>data.items.filter(x=>x.meal===meal);const mealTotal=meal=>mealItems(meal).reduce((s,x)=>s+Number(x.total||0),0);const dayTotal=()=>data.items.reduce((s,x)=>s+Number(x.total||0),0);
+function switchScreen(id){document.querySelectorAll(".screen").forEach(x=>x.classList.toggle("active",x.id===id));document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.screen===id));if(id==="parametres")renderSettings();if(id==="medicaments")renderMedications()}
+document.querySelectorAll(".nav button").forEach(btn=>btn.onclick=()=>switchScreen(btn.dataset.screen));
+function renderTabs(){const root=document.getElementById("mealTabs");root.replaceChildren();Object.entries(MEALS).forEach(([key,label])=>{const b=document.createElement("button");b.className="tab"+(key===selectedMeal?" active":"");b.textContent=label;b.onclick=()=>{selectedMeal=key;showAll=false;render()};root.append(b)})}
+function menuLabel(slot){return slot==="variante"?"Variante":`Menu ${slot}`}
+function renderMenus(){const grid=document.getElementById("menuGrid");grid.replaceChildren();[["1","Menu 1"],["2","Menu 2"],["3","Menu 3"],["variante","Variante"]].forEach(([slot,label])=>{const menu=menus[menuKey(selectedMeal,slot)],card=document.createElement("div");card.className="menu-card";const title=document.createElement("h3");title.textContent=label;card.append(title);if(!menu){card.insertAdjacentHTML("beforeend",'<div class="menu-meta">Aucun menu enregistré</div>');card.append(makeButton("Enregistrer le repas actuel","secondary",()=>saveCurrentMealAsMenu(slot)));grid.append(card);return}const meta=document.createElement("div");meta.className="menu-meta";meta.textContent=`${menu.items.length} aliment(s)`;const total=document.createElement("div");total.className="menu-total";total.textContent=`${fmt(menu.items.reduce((s,x)=>s+Number(x.total||0),0))} g`;card.append(meta,total,makeButton("Charger","primary",()=>loadMenu(slot)),makeButton("Modifier les éléments","secondary",()=>openMenuEditor(slot)),makeButton("Remplacer par le repas actuel","secondary",()=>saveCurrentMealAsMenu(slot,true)),makeButton("Créer/améliorer la variante","secondary",()=>createVariantFrom(slot)),makeButton("Supprimer","danger",()=>deleteMenu(slot)));grid.append(card)})}
+function makeButton(text,cls,fn){const b=document.createElement("button");b.className=cls;b.textContent=text;b.onclick=fn;return b}
+function copyItems(items){return items.map(x=>({id:uid(),food:x.food,qty:Number(x.qty),carbs:Number(x.carbs),total:Number(x.qty)*Number(x.carbs)}))}
+function saveCurrentMealAsMenu(slot,force=false){const items=copyItems(mealItems(selectedMeal));if(!items.length)return alert("Aucun aliment dans ce repas à enregistrer.");const key=menuKey(selectedMeal,slot);if(menus[key]&&!confirm(force?"Remplacer ce menu enregistré ?":"Ce menu existe déjà. Le remplacer ?"))return;menus[key]={day:currentDay(),meal:selectedMeal,slot,items,savedAt:Date.now()};saveMenus();render()}
+function loadMenu(slot){const menu=menus[menuKey(selectedMeal,slot)];if(!menu)return;copyItems(menu.items).forEach(x=>data.items.push({...x,meal:selectedMeal,time:Date.now()}));saveDay();render()}
+function deleteMenu(slot){const key=menuKey(selectedMeal,slot);if(menus[key]&&confirm("Supprimer ce menu enregistré ?")){delete menus[key];saveMenus();render()}}
+function createVariantFrom(slot){const source=menus[menuKey(selectedMeal,slot)];if(!source)return;const target=menuKey(selectedMeal,"variante");if(menus[target]&&!confirm("Remplacer la variante enregistrée par une copie de ce menu ?"))return;menus[target]={...source,slot:"variante",items:copyItems(source.items),savedAt:Date.now()};saveMenus();render();openMenuEditor("variante")}
+function openMenuEditor(slot){editingMenuSlot=slot;document.getElementById("menuDialogTitle").textContent=`Modifier — ${menuLabel(slot)}`;renderMenuEditor();document.getElementById("menuDialog").showModal()}
+function renderMenuEditor(){const root=document.getElementById("menuItemList"),menu=menus[menuKey(selectedMeal,editingMenuSlot)];root.replaceChildren();if(!menu||!menu.items.length){root.innerHTML='<div class="empty">Aucun élément.</div>';return}menu.items.forEach((item,index)=>{const row=document.createElement("div");row.className="row";const info=document.createElement("div");info.className="grow";const name=document.createElement("div");name.className="food";name.textContent=item.food;const meta=document.createElement("div");meta.className="meta";meta.textContent=`${fmt(item.qty)} × ${fmt(item.carbs)} g = ${fmt(item.total)} g`;info.append(name,meta);const actions=document.createElement("div");actions.className="actions";actions.append(makeButton("Modifier","secondary small",()=>openFoodEditor({type:"menu",index})),makeButton("Suppr.","danger small",()=>{menu.items.splice(index,1);saveMenus();renderMenuEditor();renderMenus()}));row.append(info,actions);root.append(row)})}
+document.getElementById("closeMenuDialog").onclick=()=>document.getElementById("menuDialog").close();
+function openFoodEditor(target){editingFood=target;const item=target.type==="day"?data.items.find(x=>x.id===target.id):menus[menuKey(selectedMeal,editingMenuSlot)].items[target.index];document.getElementById("editFood").value=item.food;document.getElementById("editQty").value=item.qty;document.getElementById("editCarbs").value=item.carbs;document.getElementById("foodDialog").showModal()}
+document.getElementById("confirmFoodEdit").onclick=e=>{e.preventDefault();const food=document.getElementById("editFood").value.trim(),qty=Number(document.getElementById("editQty").value),carbs=Number(document.getElementById("editCarbs").value);if(!food||!(qty>0)||!(carbs>=0))return alert("Veuillez remplir correctement tous les champs.");const item=editingFood.type==="day"?data.items.find(x=>x.id===editingFood.id):menus[menuKey(selectedMeal,editingMenuSlot)].items[editingFood.index];Object.assign(item,{food,qty,carbs,total:qty*carbs});editingFood.type==="day"?saveDay():saveMenus();document.getElementById("foodDialog").close();if(editingFood.type==="menu")renderMenuEditor();render()};
+function renderEntries(){const list=document.getElementById("list"),entries=showAll?data.items:mealItems(selectedMeal);document.getElementById("entriesTitle").textContent=showAll?"Toute la journée":`Entrées — ${MEALS[selectedMeal]}`;document.getElementById("toggleAll").textContent=showAll?"Voir seulement ce repas":"Voir toute la journée";list.replaceChildren();if(!entries.length){list.innerHTML='<div class="empty">Aucune entrée ici.</div>';return}entries.forEach(entry=>{const row=document.createElement("div");row.className="row";const info=document.createElement("div");info.className="grow";const food=document.createElement("div");food.className="food";food.textContent=entry.food;const meta=document.createElement("div");meta.className="meta";meta.textContent=`${MEALS[entry.meal]} · ${fmt(entry.qty)} × ${fmt(entry.carbs)} g`;info.append(food,meta);const grams=document.createElement("div");grams.className="grams";grams.textContent=`${fmt(entry.total)} g`;const actions=document.createElement("div");actions.className="actions";actions.append(makeButton("Modifier","secondary small",()=>openFoodEditor({type:"day",id:entry.id})),makeButton("Suppr.","danger small",()=>{data.items=data.items.filter(x=>x.id!==entry.id);saveDay();render()}));row.append(info,grams,actions);list.append(row)})}
+function adjustmentFor(glucose){if(!Number.isFinite(glucose))return null;return [...settings.chart].sort((a,b)=>a.min-b.min).reduce((units,row)=>glucose>=Number(row.min)?Number(row.units):units,null)}
+function renderDose(){const carbs=mealTotal(selectedMeal),ratio=Number(settings.ratios[selectedMeal]),glucoseRaw=document.getElementById("glucose").value,glucose=glucoseRaw===""?NaN:Number(glucoseRaw),carbDose=ratio>0?carbs/ratio:null,adj=adjustmentFor(glucose);document.getElementById("doseMealName").textContent=MEALS[selectedMeal];document.getElementById("carbDose").textContent=carbDose===null?"Désactivé":`${fmt(carbDose,2)} U`;document.getElementById("adjustmentDose").textContent=adj===null?"—":`${adj>=0?"+":""}${fmt(adj,2)} U`;document.getElementById("totalDose").textContent=carbDose===null||adj===null?"—":`${fmt(carbDose+adj,2)} U`;document.getElementById("doseHint").textContent=ratio>0?`Ratio ${MEALS[selectedMeal]} : 1 U pour ${fmt(ratio)} g. Entrez la glycémie pour obtenir le total.`:"Aucun calcul par ratio configuré pour ce repas."}
+function render(){renderTabs();renderMenus();renderEntries();document.getElementById("menusTitle").textContent=`Menus — ${MEALS[selectedMeal]}`;document.getElementById("selectedMealTotal").textContent=`${fmt(mealTotal(selectedMeal))} g`;document.getElementById("dayTotal").textContent=fmt(dayTotal());document.getElementById("suggestion").textContent=`Repas suggéré maintenant : ${MEALS[suggestedMeal()]}`;renderDose()}
+function renderSettings(){const root=document.getElementById("ratioFields");root.replaceChildren();Object.entries(MEALS).forEach(([key,label])=>{const l=document.createElement("label");l.htmlFor=`ratio-${key}`;l.textContent=label;const input=document.createElement("input");input.id=`ratio-${key}`;input.type="number";input.min="0";input.step="0.1";input.value=settings.ratios[key];root.append(l,input)});renderChartFields()}
+function renderChartFields(){const root=document.getElementById("chartFields");root.replaceChildren();[...settings.chart].sort((a,b)=>a.min-b.min).forEach((row,index)=>{const wrap=document.createElement("div");wrap.className="chart-row";wrap.dataset.index=index;const a=document.createElement("div");a.innerHTML=`<label>À partir de (mmol/L)</label><input class="chart-min" type="number" step="0.1" min="0" value="${row.min}">`;const b=document.createElement("div");b.innerHTML=`<label>Ajustement (U)</label><input class="chart-units" type="number" step="0.5" value="${row.units}">`;wrap.append(a,b);if(settings.chart.length>1)wrap.append(makeButton("Retirer ce seuil","danger small",()=>{settings.chart.splice(index,1);renderChartFields()}));root.append(wrap)})}
+function readChart(){return [...document.querySelectorAll("#chartFields .chart-row")].map(row=>({min:Number(row.querySelector(".chart-min").value),units:Number(row.querySelector(".chart-units").value)})).filter(x=>Number.isFinite(x.min)&&Number.isFinite(x.units)).sort((a,b)=>a.min-b.min)}
+document.getElementById("saveRatios").onclick=()=>{Object.keys(MEALS).forEach(key=>settings.ratios[key]=Math.max(0,Number(document.getElementById(`ratio-${key}`).value)||0));saveSettings();render();alert("Ratios enregistrés.")};document.getElementById("addChartRow").onclick=()=>{settings.chart=readChart();settings.chart.push({min:0,units:0});renderChartFields()};document.getElementById("saveChart").onclick=()=>{const chart=readChart();if(!chart.length)return alert("La charte doit contenir au moins un seuil.");if(new Set(chart.map(x=>x.min)).size!==chart.length)return alert("Chaque seuil doit être différent.");settings.chart=chart;saveSettings();render();alert("Charte enregistrée.")};document.getElementById("resetChart").onclick=()=>{if(confirm("Remettre la charte Trurapi par défaut ?")){settings.chart=structuredClone(DEFAULT_CHART);saveSettings();renderChartFields();render()}};
+function renderMedications(){const root=document.getElementById("medicationList");root.replaceChildren();if(!medications.length){root.innerHTML='<div class="empty">Aucun médicament enregistré.</div>';return}medications.forEach((med,index)=>{const row=document.createElement("div");row.className="row";const info=document.createElement("div");info.className="grow";const name=document.createElement("div");name.className="food";name.textContent=med.name;const details=[med.dose,med.moment,med.frequency].filter(Boolean).join(" · ");const meta=document.createElement("div");meta.className="meta";meta.textContent=details||"Détails à compléter";info.append(name,meta);if(med.notes){const notes=document.createElement("div");notes.className="meta";notes.textContent=med.notes;info.append(notes)}const actions=document.createElement("div");actions.className="actions";actions.append(makeButton("Modifier","secondary small",()=>openMedication(index)),makeButton("Suppr.","danger small",()=>{if(confirm(`Supprimer ${med.name} ?`)){medications.splice(index,1);saveMeds();renderMedications()}}));row.append(info,actions);root.append(row)})}
+function openMedication(index=null){editingMedIndex=index;const med=index===null?{name:"",dose:"",moment:"",frequency:"",notes:""}:medications[index];document.getElementById("medDialogTitle").textContent=index===null?"Ajouter un médicament ou une pilule":"Modifier le médicament";["Name","Dose","Moment","Frequency","Notes"].forEach(field=>document.getElementById(`med${field}`).value=med[field.toLowerCase()]||"");document.getElementById("medDialog").showModal()}
+document.getElementById("addMedication").onclick=()=>openMedication();document.getElementById("confirmMed").onclick=e=>{e.preventDefault();const med={name:document.getElementById("medName").value.trim(),dose:document.getElementById("medDose").value.trim(),moment:document.getElementById("medMoment").value.trim(),frequency:document.getElementById("medFrequency").value.trim(),notes:document.getElementById("medNotes").value.trim()};if(!med.name)return alert("Le nom est requis.");if(editingMedIndex===null)medications.push(med);else medications[editingMedIndex]=med;saveMeds();document.getElementById("medDialog").close();renderMedications()};
+document.getElementById("dateLabel").textContent=new Date().toLocaleDateString("fr-CA",{weekday:"long",year:"numeric",month:"long",day:"numeric"});document.getElementById("glucose").oninput=renderDose;
+document.getElementById("add").onclick=()=>{const food=document.getElementById("food").value.trim(),qty=Number(document.getElementById("qty").value),carbs=Number(document.getElementById("carbs").value);if(!food||!(qty>0)||!(carbs>=0))return alert("Entrez un aliment, une quantité et les glucides par portion.");data.items.push({id:uid(),meal:selectedMeal,food,qty,carbs,total:qty*carbs,time:Date.now()});saveDay();["food","qty","carbs"].forEach(id=>document.getElementById(id).value="");render()};
+document.getElementById("toggleAll").onclick=()=>{showAll=!showAll;render()};document.getElementById("clear").onclick=()=>{if(confirm("Effacer toutes les entrées d’aujourd’hui ? Les menus enregistrés seront conservés.")){data={date:localDateKey(),items:[]};saveDay();render()}};
+saveDay();saveMenus();saveSettings();saveMeds();render();renderSettings();renderMedications();
 </script>
-
 </body>
 </html>
